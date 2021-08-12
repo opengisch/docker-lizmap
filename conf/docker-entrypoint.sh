@@ -8,6 +8,14 @@ echo "LE_staging:" $LE_staging
 echo "LE_email:" $LE_email
 echo "LE_domain:" $LE_domain
 
+if [[ $WITH_LDAP == 'true' ]]; then
+  echo "Calling installer"
+  rm -rf /var/www/temp/lizmap/*
+  mv /var/www/lizmap/var/config/localconfig.ini.php /tmp/
+  php /var/www/lizmap/install/installer.php
+  mv /tmp/localconfig.ini.php /var/www/lizmap/var/config/
+  echo "END Calling installer"
+fi
 
 if [[ ! -d $VAR ]]; then
   echo "Creating Config file in /var"
@@ -38,10 +46,6 @@ if [[ $LE_on == 'true' ]]; then
    		/usr/sbin/apachectl stop
 		sleep 5
 	fi
-fi
-if [[ $WITH_LDAP == 'true' ]]; then
-  rm -rf /var/www/temp/lizmap/*
-  php /var/www/lizmap/install/installer.php
 fi
 cron
 exec /usr/sbin/apachectl -DFOREGROUND
