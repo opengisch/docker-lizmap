@@ -62,7 +62,7 @@ ENV LE_staging=$LE_staging
 ENV LE_on=$LE_on
 
 # this can be overriden at build time with --build-arg lizmap_version=release_3_2
-ARG lizmap_version=3.6.7
+ARG lizmap_version=3.5.16
 ENV LIZMAPVERSION=$lizmap_version
 
 # setup apache modules
@@ -101,8 +101,6 @@ RUN mv /var/www/lizmap/var var/www/lizmap/var_install
 
 # use default composer.json and install the extra modules
 RUN cp /var/www/lizmap/my-packages/composer.json.dist /var/www/lizmap/my-packages/composer.json
-ENV COMPOSER_ALLOW_SUPERUSER=1
-RUN composer require --working-dir=/var/www/lizmap/my-packages "jelix/saml-module"
 
 RUN mkdir -p /io/data/
 
@@ -119,6 +117,7 @@ RUN crontab /etc/cron.d/cache-cron
 RUN touch /var/log/cron.log
 
 
-COPY conf/docker-entrypoint.sh /usr/local/bin/
+COPY conf/start.sh /usr/local/bin/
+COPY conf/migrate.sh /usr/local/bin/
 #RUN chmod u+x /bin/docker-entrypoint.sh
-CMD ["docker-entrypoint.sh"]
+# CMD ["start.sh"]

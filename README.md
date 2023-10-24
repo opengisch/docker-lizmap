@@ -1,17 +1,15 @@
 [![Try in PWD](https://cdn.rawgit.com/play-with-docker/stacks/cff22438/assets/images/button.png)](http://play-with-docker.com?stack=https://raw.githubusercontent.com/jancelin/docker-lizmap/master/docker-compose.yml)
 
-docker-lizmap 
-=============
+# docker-lizmap
 
 LizMap is a complete Internet QGIS map publishing.
 ___________________________________________________________________________
 
-Building image:
----------------
+## Building image:
+
 docker build --build-arg lizmap_version=3.6.7 -t=opengisch/lizmap:3.6.7 .
 
-Using image:
----------------
+## Using image:
 
 With Docker-compose:
 
@@ -30,7 +28,7 @@ docker-compose up -d
 ```
 http://localhost/admin.php/config
 ```
-* change URL WMS: 
+* change URL WMS:
 
 >> http://qgiserver/cgi-bin/qgis_mapserv.fcgi
 
@@ -38,41 +36,31 @@ http://localhost/admin.php/config
 
 ![config](https://cloud.githubusercontent.com/assets/6421175/11306233/e945f342-8fb0-11e5-9906-4010b9398ef1.png)
 
-* http://docs.3liz.com/fr/ 
+* http://docs.3liz.com/fr/
 
-Upgrading from Lizmap 3.5
--------------------------
+## Upgrading from Lizmap 3.4 or 3.3
 
-If you want to reuse a database containing tables of Lizmap 3.5, create a directory somewhere,
-for example `./lizmap-previous-config`, and copy these files into it:
+This image offers a way of migrating all your configuration and Userdatabase so that it can be
+used with the new version.
 
-- at least the `installer.ini.php` of the Lizmap 3.5 installation (stored originally into `lizmap/var/config`)
+For that just run:
+
+```shell
+docker run --rm -v <path-to-old-config>:/var/www/lizmap/previous-config -v <path-to-new-config>:/var/www/lizmap/var/config migrate.sh
+```
+
+
+If you want to reuse a database containing tables of Lizmap 3.3 or 3.4, create a directory somewhere,
+for example `./lizmap-old-config`, and copy these files into it:
+
+- at least the `installer.ini.php` of the Lizmap 3.3/3.4 installation (stored originally into `lizmap/var/config`)
 - the `lizmapConfig.ini.php` file if you want to retrieve the list of projects
 - the `profiles.ini.php` file if there are specific connection profiles
 - the `localconfig.ini.php` and `liveconfig.ini.php` if you want to retrieve some specific configuration, but
-  you should remove from them any reference to modules that are not used anymore into your new lizmap container. 
+  you should remove from them any reference to modules that are not used anymore into your new lizmap container.
 - if you are using a sqlite database, the `jauth.db` database file (stored originally into `lizmap/var/db`)
 
-Modify the `docker-compose.yml` file to mount the `./lizmap-previous-config` directory at `/var/www/lizmap/previous-config`
-for the lizmap image. For example:
-
-```
-services:
-  lizmap:
-    ...
-    volumes:
-     - ./projects:/io/data:ro
-     - var:/var/www/lizmap/var
-     - ./lizmap-previous-config/:/var/www/lizmap/previous-config
-```
-
-Launch docker compose. It will install the `installer.ini.php` and the `jauth.db`, and other configuration files if
-there are present, and then it will launch the Lizmap installer which will migrate data if needed.
-
-Stop the containers and remove the mount on `/var/www/lizmap/previous-config`, else it will overwrite new data
-at the next start, with the old database and old configuration files.
-
-
+The updated configuration is written to <path-to-new-config>. To test it you can mount it where your instance is running.
 
 -------------------------------
 
