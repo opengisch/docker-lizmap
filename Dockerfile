@@ -120,4 +120,4 @@ RUN touch /var/log/cron.log
 COPY conf/start.sh /usr/local/bin/
 COPY conf/migrate.sh /usr/local/bin/
 #RUN chmod u+x /bin/docker-entrypoint.sh
-# CMD ["start.sh"]
+CMD ["start.sh"]
