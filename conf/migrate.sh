@@ -3,6 +3,19 @@ set -e
 #generate config file
 VARCONFIG="/var/www/lizmap/var/config"
 PREVIOUSCONFIG="/var/www/lizmap/previous-config"
+NEWCONFIG="/var/www/lizmap/new-config"
+
+if [[ ! -d $PREVIOUSCONFIG ]]; then
+  # migration needs this dir
+  echo "no dir $PREVIOUSCONFIG was found, migration not possible"
+  exit 1
+fi
+
+if [[ ! -d $NEWCONFIG ]]; then
+  # migration needs this dir
+  echo "no dir $NEWCONFIG was found, migration not possible"
+  exit 1
+fi
 
 if [[ ! -d $VARCONFIG ]]; then
   # the var volume is empty, let's fill it with default configuration files and missing directories
@@ -50,3 +63,10 @@ php /var/www/lizmap/install/installer.php
 /var/www/lizmap/install/clean_vartmp.sh
 #set-rights
 /var/www/lizmap/install/set_rights.sh www-data www-data
+
+cp $VARCONFIG/installer.ini.php $NEWCONFIG/
+cp $VARCONFIG/localconfig.ini.php $NEWCONFIG/
+cp $VARCONFIG/liveconfig.ini.php $NEWCONFIG/
+cp $VARCONFIG/profiles.ini.php $NEWCONFIG/
+cp $VARCONFIG/lizmapConfig.ini.php $NEWCONFIG/
+cp /var/www/lizmap/var/db/jauth.db $NEWCONFIG/
